@@ -19,6 +19,7 @@ export class DatabaseService {
             const salt = await bcrypt.genSalt(10);
             const hashpassword = await bcrypt.hash(password, salt);
             const user = await this.userRepository.save({ userName, password: hashpassword });
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { password: pass, ...result } = user
             return result
         } catch (error) {
@@ -33,10 +34,11 @@ export class DatabaseService {
             if (!user) throw new RpcException({ message: 'User not found', status: HttpStatus.NOT_FOUND });
             const compare = await bcrypt.compare(password, user.password);
             if (!compare) throw new RpcException({ message: 'Invalid password', status: HttpStatus.BAD_REQUEST });
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { password: pass, ...result } = user
             return result
         } catch (error) {
-
+            throw error
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, FileTypeValidator, Inject, MaxFileSizeValidator, Param, ParseFilePipe, Post, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, FileTypeValidator, Inject, MaxFileSizeValidator, Param, ParseFilePipe, Post, Scope, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { IMAGE_SERVICE } from './config/config';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
@@ -9,11 +9,12 @@ import { CreateImageDto } from './dto/create-image.dto';
 import { AuthGuard } from './auth/auth.guard';
 import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiParam } from '@nestjs/swagger';
 import { ImageDtoResponse } from './dto/image.dto';
+import { REQUEST } from '@nestjs/core';
 
 
-@Controller('image')
+@Controller({ path: 'image', scope: Scope.REQUEST })
 export class AppController {
-  constructor(@Inject(IMAGE_SERVICE) private readonly imageClient: ClientProxy) { }
+  constructor(@Inject(IMAGE_SERVICE) private readonly imageClient: ClientProxy, @Inject(REQUEST) private request: Request) { }
 
   @UseGuards(AuthGuard)
   @Post('upload')
@@ -59,7 +60,8 @@ export class AppController {
       } satisfies FileUploadDto
     }))
     try {
-      const urls = await firstValueFrom(this.imageClient.send('upload-images', filesToUpload))
+      const userId = this.request['user'].id
+      const urls = await firstValueFrom(this.imageClient.send('upload-images', { filesToUpload, userId }))
       return urls
     } catch (error) {
       throw new RpcException(error)

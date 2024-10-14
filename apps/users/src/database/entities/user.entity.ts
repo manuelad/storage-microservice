@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import { Image } from "apps/images-ms/src/database/entities/image.entity";
+import { BaseEntity, Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class User extends BaseEntity {
@@ -11,5 +12,8 @@ export class User extends BaseEntity {
 
     @Column()
     password: string
+
+    @OneToMany(() => Image, image => image.user)
+    images: Image[]
 
 }

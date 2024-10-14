@@ -17,9 +17,10 @@ export class UsersController {
   }
 
   @MessagePattern('signin')
-  signin(@Payload() user: CreateUserDto) {
+  async signin(@Payload() user: CreateUserDto) {
     try {
-      return this.dataBaseService.signin(user);
+      const userResult = await this.dataBaseService.signin(user);
+      return userResult;
     } catch (error) {
       throw new RpcException(error);
     }

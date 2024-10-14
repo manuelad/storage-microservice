@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
+import { RpcCustomExceptionFilter } from './exceptions/rpc-exception.filter';
 
 async function bootstrap() {
   const logger = new Logger('app-main')
@@ -29,6 +30,7 @@ async function bootstrap() {
     })
   )
   app.setGlobalPrefix('api')
+  app.useGlobalFilters(new RpcCustomExceptionFilter());
   const PORT = Number(process.env.APP_MAIN_PORT);
   await app.listen(PORT);
   logger.log(`Application is running on: ${PORT}`);

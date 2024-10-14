@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "apps/users/src/database/entities/user.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Image {
@@ -19,6 +20,9 @@ export class Image {
 
     @Column()
     url: string
+
+    @ManyToOne(() => User, (user) => user.images)
+    user: User
 
 
 }

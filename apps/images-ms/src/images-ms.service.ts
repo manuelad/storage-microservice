@@ -18,9 +18,8 @@ export class ImagesMsService implements OnModuleInit {
     this.storage = getStorage(app)
   }
 
-  async uploadImages(files: Array<FileUploadDto>) {
+  async uploadImages(files: Array<FileUploadDto>, userId: any) {
     try {
-
       const resultFilesUpload = await Promise.all(files.map(async (file) => {
         const ext = file.originalName.split('.').pop();
         const mimeType = file.mimeType.split('/')[0].concat(`/${ext}`)
@@ -29,10 +28,9 @@ export class ImagesMsService implements OnModuleInit {
         };
         const storageRef = ref(this.storage, `${process.env.FOLDER_STORAGE}/${v4()}.${ext}`)
         const result = await uploadString(storageRef, file.buffer, 'base64', metadata)
-        console.log(result)
         const url = await getDownloadURL(storageRef)
         const { fullPath: filePath, name: fileName, size: fileSize, timeCreated: createdAt } = result.metadata
-        await this.databaseService.createImage(fileName, filePath, fileSize, createdAt, url)
+        await this.databaseService.createImage(fileName, filePath, fileSize, createdAt, url, String(userId))
         return url
 
       }))
@@ -40,7 +38,7 @@ export class ImagesMsService implements OnModuleInit {
 
 
     } catch (error) {
-      throw new RpcException(error)
+      throw new RpcException(error?.message)
     }
 
   }

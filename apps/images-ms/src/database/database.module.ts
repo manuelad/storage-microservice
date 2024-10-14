@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseService } from './database.service';
 import 'dotenv/config';
 import { Image } from './entities/image.entity';
+import { User } from 'apps/users/src/database/entities/user.entity';
 
 @Module({
     imports: [
@@ -16,9 +17,9 @@ import { Image } from './entities/image.entity';
             autoLoadEntities: true,
             synchronize: true,
             url: process.env.DATABASE_URL,
-            entities: [Image],
+            entities: [Image, User],
         }),
-        TypeOrmModule.forFeature([Image]),
+        TypeOrmModule.forFeature([Image, User]),
     ],
     providers: [DatabaseService],
     exports: [DatabaseService]

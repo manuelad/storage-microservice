@@ -35,7 +35,7 @@ export class AuthController {
         ...user
       }
     } catch (error) {
-      throw new RpcException(error)
+      throw new RpcException({ message: error.message, status: error.status })
     }
   }
 
